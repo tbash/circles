@@ -1,0 +1,8 @@
+.DS_Store
+repl-temp-*
+
+elm-stuff/
+node_modules/
+
+public/main.js
+public/main.css
