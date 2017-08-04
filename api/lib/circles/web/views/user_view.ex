@@ -15,17 +15,8 @@ defmodule Circles.Web.UserView do
       id: user.id,
       background: user.background,
       avatar: user.avatar,
-      handle: user.handle
-    }
-  end
-
-  def render("auth_user.json", %{user: user, token: token}) do
-    %{
-      id: user.id,
-      background: user.background,
-      avatar: user.avatar,
       handle: user.handle,
-      token: token,
+      token: user.token
     }
   end
 end

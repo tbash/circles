@@ -1,10 +1,10 @@
-defmodule Circles.Web.RequestController do
+defmodule Circles.Web.RequestOauthController do
   use Circles.Web, :controller
 
   action_fallback Circles.Web.FallbackController
 
-  def show(conn, %{"callback" => callback}) do
-    with token <- ExTwitter.request_token(callback),
+  def show(conn, _) do
+    with token <- ExTwitter.request_token(),
          {:ok, auth_url} <- ExTwitter.authenticate_url(token.oauth_token),
     do:
       conn

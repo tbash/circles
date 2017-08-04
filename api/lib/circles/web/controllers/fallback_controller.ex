@@ -17,4 +17,10 @@ defmodule Circles.Web.FallbackController do
     |> put_status(:not_found)
     |> render(Circles.Web.ErrorView, :"404")
   end
+
+  def call(conn, _) do
+    conn
+    |> put_status(:internal_server_error)
+    |> render(Circles.Web.ErrorView, :"500")
+  end
 end
