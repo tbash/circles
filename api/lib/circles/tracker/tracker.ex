@@ -1,6 +1,5 @@
 defmodule Circles.Tracker do
   use GenServer
-  require Logger
 
   alias Circles.Account.User
 

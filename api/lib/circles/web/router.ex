@@ -8,9 +8,10 @@ defmodule Circles.Web.Router do
   scope "/", Circles.Web do
     pipe_through :api
 
-    resources "/users", UserController, only: [:create] # , :delete]
-    resources "/request_oauth", RequestOauthController, only: [:show], singleton: true
-    resources "/rooms", RoomController, except: [:new, :edit]
+    resources "/users",         UserController,
+                                only: [:create] # , :delete]
+    resources "/request_oauth", RequestOauthController,
+                                only: [:show], singleton: true
 
     get "/",      ApplicationController, :ok
     get "/*path", ApplicationController, :not_found

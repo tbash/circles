@@ -5,10 +5,10 @@
   "scripts": {
     "start": "yarn start:elm & yarn start:css",
     "start:elm": "elm-live src/elm/Main.elm --output=public/main.js --dir=public --port=3000 --debug --pushstate",
-    "start:css": "postcss --watch --use postcss-import postcss-cssnext -o public/main.css --dir=public src/css/index.css",
+    "start:css": "postcss --watch --use postcss-import postcss-cssnext -o public/main.css src/css/index.css",
     "build": "yarn build:elm & yarn build:css",
     "build:elm": "elm-make src/elm/Main.elm --output=public/main.js",
-    "build:css": "postcss --use postcss-import postcss-cssnext -o public/main.css --dir=public src/css/index.css"
+    "build:css": "postcss --use postcss-import postcss-cssnext -o public/main.css src/css/index.css"
   },
   "devDependencies": {
     "elm": "^0.18.0",

@@ -27,8 +27,6 @@ body {
   background-color: var(--lighter);
   min-height: 100%;
   min-width: 100%;
-}
-
-.some {
-  font-size: var(--font-size-1);
+  font-family: Arial, sans-serif;
+  font-size: 16px;
 }

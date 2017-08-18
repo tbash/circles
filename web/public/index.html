@@ -10,9 +10,37 @@
   <body>
     <script type="text/javascript" src="./main.js" charset="utf-8"></script>
     <script type="text/javascript">
-      Elm.Main.fullscreen();
+      var SESSION_NAME = 'CIRCLES';
 
-      console.log(window.location)
+      var app = Elm.Main.fullscreen(localStorage[SESSION_NAME] || null);
+
+      function getParameterByName(name) {
+        var match =
+          RegExp('[?&]' + name + '=([^&]*)')
+            .exec(window.location.search);
+
+        return match && decodeURIComponent(match[1].replace(/\+/g, ' '));
+      }
+
+      var token = getParameterByName('oauth_token');
+      var verifier = getParameterByName('oauth_verifier');
+
+      if (token && verifier) {
+        // app.ports.authenticate.send(token, verifier);
+
+        window.history.replaceState({}, '', '/');
+      }
+
+      // app.ports.storeSession.subscribe(function(session) {
+      //   localStorage.setItem(SESSION_NAME, session));
+      // };
+      //
+      // window.addEventListener("storage", (event) => {
+      //   if (event.storageArea === localStorage && event.key === SESSION_NAME) {
+      //     app.ports.onSessionChange.send(event.newValue);
+      //   }
+      // }, false);
+
     </script>
   </body>
 </html>
