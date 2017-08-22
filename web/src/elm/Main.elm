@@ -5,6 +5,8 @@ import Html.Attributes exposing (style)
 import Html.Events exposing (on)
 import Json.Decode as Decode exposing (Value)
 import Mouse exposing (Position)
+import Phoenix.Socket
+import Ports
 import Util exposing ((=>), asset)
 
 
@@ -14,6 +16,7 @@ import Util exposing ((=>), asset)
 type alias Model =
     { position : Position
     , drag : Maybe Drag
+    , phxSocket : Phoenix.Socket.Socket Msg
     }
 
 
@@ -25,7 +28,11 @@ type alias Drag =
 
 init : Value -> ( Model, Cmd Msg )
 init _ =
-    Model (Position 200 200) Nothing => Cmd.none
+    { position = Position 200 200
+    , drag = Nothing
+    , phxSocket = Phoenix.Socket.init "ws://10.0.0.118:4000/socket/websocket?token=SFMyNTY.g3QAAAACZAAEZGF0YW0AAAAkZGViMTAyYzMtNDA5Yi00OTA2LTgzNGQtZmZiNjdjMGNkYzQxZAAGc2lnbmVkbgYA-h1MB14B.U8RqaDxhxtx6cQkvlFaWF50VG0s2kK2kYW_3J0ur-t4"
+    }
+        => Cmd.none
 
 
 
@@ -36,24 +43,36 @@ type Msg
     = DragStart Position
     | DragAt Position
     | DragEnd Position
+    | PhoenixMsg (Phoenix.Socket.Msg Msg)
+    | ReceiveValue Value
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
-update msg model =
-    updateModel msg model => Cmd.none
-
-
-updateModel : Msg -> Model -> Model
-updateModel msg ({ position, drag } as model) =
+update msg ({ position, drag } as model) =
     case msg of
         DragStart xy ->
             { model | drag = Just <| Drag xy xy }
+                => Cmd.none
 
         DragAt xy ->
             { model | drag = Maybe.map (\{ start } -> Drag start xy) drag }
+                => Cmd.none
 
         DragEnd _ ->
             { model | position = getPosition model, drag = Nothing }
+                => Cmd.none
+
+        PhoenixMsg msg ->
+            let
+                ( phxSocket, phxCmd ) =
+                    Phoenix.Socket.update msg model.phxSocket
+            in
+            ( { model | phxSocket = phxSocket }
+            , Cmd.map PhoenixMsg phxCmd
+            )
+
+        ReceiveValue value ->
+            model => Cmd.none
 
 
 getPosition : Model -> Position
@@ -118,7 +137,16 @@ circle r color model =
 
 
 subscriptions : Model -> Sub Msg
-subscriptions { drag } =
+subscriptions model =
+    Sub.batch
+        [ mouseSubscriptions model
+        , Phoenix.Socket.listen model.phxSocket PhoenixMsg
+        , Ports.authenticate ReceiveValue
+        ]
+
+
+mouseSubscriptions : Model -> Sub Msg
+mouseSubscriptions { drag } =
     case drag of
         Nothing ->
             Sub.none
