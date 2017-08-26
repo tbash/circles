@@ -11,7 +11,7 @@ defmodule Circles.Tracker do
   end
 
   def insert(%User{} = user) do
-    :ets.insert(@tab, {user.id, user})
+    GenServer.call(__MODULE__, {:insert, {user.id, user}})
   end
 
   def list do
@@ -24,5 +24,11 @@ defmodule Circles.Tracker do
                                                  write_concurrency: true])
 
     {:ok, %{}}
+  end
+
+  def handle_call({:insert, data}, _from, _state) do
+    result = :ets.insert(@tab, data)
+
+    {:reply, result, %{}}
   end
 end
